@@ -59,8 +59,7 @@ async function train() {
 			epochs: 10,
 			shuffle:true
 		}).then((response)=> {
-			let myJSON = response;
-			console.log(myJSON["history"]["loss"]);
+			console.log(response.history.loss);
 			}
 		)};
 	}
