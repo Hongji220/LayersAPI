@@ -1,6 +1,8 @@
 const model = tf.sequential();
 
 let learningRate = 0.1;
+let lossovertime = [];
+let arrayinside = [];
 
 
 // Creating the single hidden layer in this model, specifying the inputs.
@@ -54,15 +56,15 @@ const ys = tf.tensor2d([
 /*model.fit(xs,ys).then((response) => console.log(response));*/
 
 async function train() {
-	for (let i = 0; i < 100 ; i++){
+	for (let i = 0; i < 10 ; i++){
 		const history = await model.fit(xs,ys, {
-			epochs: 10,
 			shuffle:true
 		}).then((response)=> {
-			console.log(response.history.loss);
-			}
-		)};
-	}
+			console.log(response.history.loss[0])})
+		}
+}
+	
+
 	
 
 
@@ -72,11 +74,40 @@ train().then(() => {
 	console.log("Training Complete.");
 	let outputs = model.predict(xs);
 	outputs.print();
+	
+	//chart:
+let chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "light2",
+	title:{
+		text: "Simple Line Chart"
+	},
+	axisY:{
+		includeZero: false
+	},
+	data: [{        
+		type: "line",       
+		dataPoints: [
+			{ y: output[0] },
+			{ y: output[1]},
+			{ y: output[2], indexLabel: "highest",markerColor: "red", markerType: "triangle" },
+			{ y: output[3]},
+			{ y: output[0]},
+			{ y: output[0] },
+			{ y: output[0] },
+			{ y: output[0] },
+			{ y: output[0], indexLabel: "lowest",markerColor: "DarkSlateGrey", markerType: "cross" },
+			{ y: output[0] }
+		]
+	}]
 });
+chart.render();
 
 
-
-
+			}
+		);
+	
+	
 
 
 
