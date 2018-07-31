@@ -2,7 +2,6 @@ const model = tf.sequential();
 
 let learningRate = 0.1;
 let lossovertime = [];
-let arrayinside = [];
 
 
 // Creating the single hidden layer in this model, specifying the inputs.
@@ -56,11 +55,14 @@ const ys = tf.tensor2d([
 /*model.fit(xs,ys).then((response) => console.log(response));*/
 
 async function train() {
-	for (let i = 0; i < 10 ; i++){
+	for (let i = 0; i < 100 ; i++){
 		const history = await model.fit(xs,ys, {
+			epochs:10,
 			shuffle:true
 		}).then((response)=> {
-			console.log(response.history.loss[0])})
+			console.log(response.history.loss[0]);
+			lossovertime.push(response.history.loss[0]);
+		})
 		}
 }
 	
@@ -74,34 +76,40 @@ train().then(() => {
 	console.log("Training Complete.");
 	let outputs = model.predict(xs);
 	outputs.print();
+	console.log(lossovertime);
 	
 	//chart:
-let chart = new CanvasJS.Chart("chartContainer", {
-	animationEnabled: true,
-	theme: "light2",
-	title:{
-		text: "Simple Line Chart"
-	},
-	axisY:{
-		includeZero: false
-	},
-	data: [{        
-		type: "line",       
-		dataPoints: [
-			{ y: output[0] },
-			{ y: output[1]},
-			{ y: output[2], indexLabel: "highest",markerColor: "red", markerType: "triangle" },
-			{ y: output[3]},
-			{ y: output[0]},
-			{ y: output[0] },
-			{ y: output[0] },
-			{ y: output[0] },
-			{ y: output[0], indexLabel: "lowest",markerColor: "DarkSlateGrey", markerType: "cross" },
-			{ y: output[0] }
-		]
-	}]
+let labels = [];
+for (let i = 0; i<lossovertime.length; i++){
+	labels.push(i+1);
+}
+let ctx = document.getElementById("chartContainer").getContext('2d');
+let myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+		labels: labels,
+        datasets: [{
+            label: 'Loss Overtime',
+            data: lossovertime,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.3)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:false
+                }
+            }]
+        }
+    }
 });
-chart.render();
 
 
 			}
