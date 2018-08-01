@@ -55,9 +55,9 @@ const ys = tf.tensor2d([
 /*model.fit(xs,ys).then((response) => console.log(response));*/
 
 async function train() {
-	for (let i = 0; i < 100 ; i++){
+	for (let i = 0; i < 10 ; i++){
 		const history = await model.fit(xs,ys, {
-			epochs:10,
+			epochs:100,
 			shuffle:true
 		}).then((response)=> {
 			console.log(response.history.loss[0]);
@@ -76,7 +76,6 @@ train().then(() => {
 	console.log("Training Complete.");
 	let outputs = model.predict(xs);
 	outputs.print();
-	console.log(lossovertime);
 	
 	//chart:
 let labels = [];
@@ -110,13 +109,25 @@ let myChart = new Chart(ctx, {
         }
     }
 });
+outputs.data().then(() => {
+	let text1 = document.getElementById("text");
+	text1.innerHTML = "Output Tensor: <br>"
+	
+	for (let i = 1 ; i <= 9 ; i++ ) {
+		text1.innerHTML += outputs.dataSync()[i-1];
+		if (i != 9){
+		text1.innerHTML += " , ";
+		}
+		if (i%3 == 0 && i != 0) {
+			text1.innerHTML += " <br> ";
+		}
+	}
+ 	
+});
 
-
-			}
-		);
 	
 	
-
+})
 
 
 
