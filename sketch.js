@@ -110,17 +110,23 @@ let myChart = new Chart(ctx, {
     }
 });
 outputs.data().then(() => {
-	let text1 = document.getElementById("text");
-	text1.innerHTML = "Output Tensor: <br>"
+	let output = document.getElementById("output");
+	let expected = document.getElementById("expected");
+	
+	expected.innerHTML += "Expected: <br>"
+	expected.innerHTML += "0.2 , 0.2 , 0.2<br>0.2 , 0.2 , 0.2<br>0.2 , 0.2 , 0.2"
+	output.innerHTML += "Output Tensor: <br>";
+	
 	
 	for (let i = 1 ; i <= 9 ; i++ ) {
-		text1.innerHTML += outputs.dataSync()[i-1];
-		if (i != 9){
-		text1.innerHTML += " , ";
-		}
+		output.innerHTML += Math.round(outputs.dataSync()[i-1]*1000)/1000;
 		if (i%3 == 0 && i != 0) {
-			text1.innerHTML += " <br> ";
+			output.innerHTML += " <br> ";
 		}
+		else if (i != 9 ){
+			output.innerHTML += " , ";
+		}
+		
 	}
  	
 });
