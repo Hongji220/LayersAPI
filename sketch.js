@@ -1,7 +1,27 @@
+window.onload(drawGraph())
+
+function drawGraph(){
+
+
 const model = tf.sequential();
 
-let learningRate = 0.1;
+let learningRate = 0.8;
 let lossovertime = [];
+	
+
+// We can do this, but it can only  be run once and cannot be reiterated (it is async).
+/*model.fit(xs,ys).then((response) => console.log(response));*/
+
+async function train() {
+	for (let i = 0; i < 50 ; i++){
+		const history = await model.fit(xs,ys, {
+			shuffle:true
+		}).then((response)=> {
+			console.log(response.history.loss[0]);
+			lossovertime.push(response.history.loss[0]);
+		})
+		}
+}
 
 
 // Creating the single hidden layer in this model, specifying the inputs.
@@ -29,7 +49,7 @@ model.add(output);
 
 //Creating the Stochastic gradient descent optimizer with LR.
 
-const sgdOptimizer = tf.train.sgd(learningRate);
+const sgdOptimizer = tf.train.rmsprop(learningRate);
 
 // Calling the tf.model compiler to compile with those configurations:
 
@@ -51,20 +71,7 @@ const ys = tf.tensor2d([
 ])
 
 
-// We can do this, but it can only  be run once and cannot be reiterated (it is async).
-/*model.fit(xs,ys).then((response) => console.log(response));*/
 
-async function train() {
-	for (let i = 0; i < 10 ; i++){
-		const history = await model.fit(xs,ys, {
-			epochs:100,
-			shuffle:true
-		}).then((response)=> {
-			console.log(response.history.loss[0]);
-			lossovertime.push(response.history.loss[0]);
-		})
-		}
-}
 	
 
 	
@@ -112,6 +119,8 @@ let myChart = new Chart(ctx, {
 outputs.data().then(() => {
 	let output = document.getElementById("output");
 	let expected = document.getElementById("expected");
+	expected.innerHTML = "";
+	output.innerHTML = "";
 	
 	expected.innerHTML += "Expected: <br>"
 	expected.innerHTML += "0.2 , 0.2 , 0.2<br>0.2 , 0.2 , 0.2<br>0.2 , 0.2 , 0.2"
@@ -119,7 +128,7 @@ outputs.data().then(() => {
 	
 	
 	for (let i = 1 ; i <= 9 ; i++ ) {
-		output.innerHTML += Math.round(outputs.dataSync()[i-1]*1000)/1000;
+		output.innerHTML += Math.round(outputs.dataSync()[i-1]*10000)/10000;
 		if (i%3 == 0 && i != 0) {
 			output.innerHTML += " <br> ";
 		}
@@ -136,6 +145,9 @@ outputs.data().then(() => {
 })
 
 
+
+
+}
 
 
 
